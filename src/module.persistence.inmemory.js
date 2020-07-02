@@ -1,8 +1,61 @@
 const
-    assert = require("assert"),
     regex_semantic_id = /^https?:\/\/\S+$|^\w+:\S+$/,
     regex_nonempty_key = /\S/,
     array_primitive_types = Object.freeze(["boolean", "number", "string"]);
+
+/**
+ * 
+ * @param {*} value 
+ * @param {String} [errMsg=""] 
+ * @param {Class<Error>} [errType=Error] 
+ */
+function assert(value, errMsg = "", errType = Error) {
+    if (!value) {
+        const err = new errType(errMsg);
+        Error.captureStackTrace(err, assert);
+        throw err;
+    }
+} // assert
+
+/**
+ * Returns true, if the value does include at least one nonspace character.
+ * @param {String} value 
+ * @returns {Boolean}
+ */
+function is_nonempty_key(value) {
+    return regex_nonempty_key.test(value);
+} // is_nonempty_key
+
+/**
+ * This is an IRI or a prefixed IRI.
+ * @typedef {String|IRI} SemanticID
+ * 
+ * Returns true, if the value is a complete or prefixed IRI.
+ * This function is important to distinct values from IRIs and
+ * to make sure, subject, predicate and object have valid ids.
+ * @param {SemanticID} value 
+ * @returns {Boolean}
+ */
+function is_semantic_id(value) {
+    return regex_semantic_id.test(value);
+} // is_semantic_id
+
+/**
+ * This are the only values neo4j can store on a node.
+ * @typedef {null|Boolean|Number|String|Array<Boolean>|Array<Number>|Array<String>} PrimitiveValue 
+ * 
+ * Returns true, if the value is primitive. This function
+ * is important to make sure, a value can be stored in neo4j.
+ * @param {PrimitiveValue} value 
+ * @returns {Boolean}
+ */
+function is_primitive_value(value) {
+    return value === null
+        || array_primitive_types.includes(typeof value)
+        || (Array.isArray(value) && array_primitive_types.some(
+            type => value.every(arrValue => typeof arrValue === type)
+        ));
+} // is_primitive_value
 
 /**
  * This is the general concept of a persistence adapter.
@@ -30,46 +83,6 @@ module.exports = function (config) {
 
     /** @type {Map<String, Object>} */
     const inmemory_storage = config["storage"];
-
-    /**
-     * Returns true, if the value does include at least one nonspace character.
-     * @param {String} value 
-     * @returns {Boolean}
-     */
-    function is_nonempty_key(value) {
-        return regex_nonempty_key.test(value);
-    } // is_nonempty_key
-
-    /**
-     * This is an IRI or a prefixed IRI.
-     * @typedef {String|IRI} SemanticID
-     * 
-     * Returns true, if the value is a complete or prefixed IRI.
-     * This function is important to distinct values from IRIs and
-     * to make sure, subject, predicate and object have valid ids.
-     * @param {SemanticID} value 
-     * @returns {Boolean}
-     */
-    function is_semantic_id(value) {
-        return regex_semantic_id.test(value);
-    } // is_semantic_id
-
-    /**
-     * This are the only values neo4j can store on a node.
-     * @typedef {null|Boolean|Number|String|Array<Boolean>|Array<Number>|Array<String>} PrimitiveValue 
-     * 
-     * Returns true, if the value is primitive. This function
-     * is important to make sure, a value can be stored in neo4j.
-     * @param {PrimitiveValue} value 
-     * @returns {Boolean}
-     */
-    function is_primitive_value(value) {
-        return value === null
-            || array_primitive_types.includes(typeof value)
-            || (Array.isArray(value) && array_primitive_types.some(
-                type => value.every(arrValue => typeof arrValue === type)
-            ));
-    } // is_primitive_value
 
     /**
      * Uses the inmemory storage map and returns function results.
