@@ -34,6 +34,6 @@ interface DataStoreCore extends DatasetCore, EventEmitter {
 
 ```ts
 interface DataStoreCoreFactory {
-    store(graph: NamedNode): DataStore;
+    store(graph: NamedNode): DataStoreCore;
 };
 ```
