@@ -1,4 +1,11 @@
 const
-	DataFactory = require('../../module.persistence/src/module.persistence.js');
+	// dataFactory = require('../../module.persistence/src/module.persistence.js'),
+	Dataset = require('./Dataset.js');
 
-// TODO
+/**
+ * @param {Iterable<Quad>} [quads]
+ * @returns {Dataset}
+ */
+exports.dataset = function(quads) {
+	return new Dataset(quads);
+};

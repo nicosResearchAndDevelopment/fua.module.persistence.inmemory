@@ -5,7 +5,10 @@
   "main": "src/module.persistence.inmemory.js",
   "dependencies": {
     "rdflib": "^2.1.3",
-    "n3": "^1.7.0"
+    "n3": "^1.7.0",
+    "node-fetch": "^2.6.1",
+    "rdf-validate-shacl": "^0.2.5",
+    "jsonld": "^3.2.0"
   },
   "devDependencies": {
     "mocha": "^8.2.1",
