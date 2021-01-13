@@ -1,5 +1,7 @@
 # module.persistence.inmemory
 
+- [Persistence](../module.persistence)
+
 ## Interface
 
 - [RDF/JS: Dataset specification](https://rdf.js.org/dataset-spec/)
