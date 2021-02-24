@@ -1,45 +1,61 @@
 const
-    dataFactory = require('../../module.persistence/src/module.persistence.js'),
-    Dataset = require('./Dataset.js'),
-    n3 = require('n3');
+    _                    = Object.create(null),
+    {Dataset, DataStore} = require('@nrd/fua.module.persistence');
 
-/**
- * @typedef {string} TermIdentifier
- */
+_.lockProp = function (obj, ...keys) {
+    const lock = {writable: false, configurable: false};
+    for (let key of keys) {
+        Object.defineProperty(obj, key, lock);
+    }
+};
 
-/**
- * @param {Iterable<Quad>} [quads]
- * @returns {Dataset}
- */
-function dataset(quads) {
-    return new Dataset(quads);
-}
+class InmemoryStore extends DataStore {
 
-/**
- * @param {Dataset} that
- * @returns {boolean}
- */
-function isDataset(that) {
-    return that instanceof Dataset;
-}
+    constructor(options, factory) {
+        super(options || {}, factory);
+        this.dataset = new Dataset(null, this.factory);
+        _.lockProp(this, 'dataset');
+    } // InmemoryStore#constructor
 
-/**
- * @param {Term} term
- * @returns {TermIdentifier}
- */
-function termToId(term) {
-    return n3.termToId(term);
-} // termToId
+    async size() {
+        return this.dataset.size;
+    } // InmemoryStore#size
 
-/**
- * @param {TermIdentifier} termId
- * @returns {Term}
- */
-function termFromId(termId) {
-    return n3.termFromId(termId, dataFactory);
-} // termFromId
+    async match(subject, predicate, object, graph) {
+        // const dataset = await super.match(subject, predicate, object, graph);
+        return this.dataset.match(subject, predicate, object, graph);
+    } // InmemoryStore#match
 
-exports = module.exports = {
-    dataset, isDataset,
-    termToId, termFromId
-}; // exports
+    async add(quads) {
+        // const quadArr = await super.add(quads);
+        return this.dataset.add(quads);
+    } // InmemoryStore#add
+
+    async addStream(stream) {
+        // const quadStream = await super.addStream(stream);
+        return this.dataset.addStream(stream);
+    } // InmemoryStore#addStream
+
+    async delete(quads) {
+        // const quadArr = await super.delete(quads);
+        return this.dataset.delete(quads);
+    } // InmemoryStore#delete
+
+    async deleteStream(stream) {
+        // const quadStream = await super.deleteStream(stream);
+        return this.dataset.deleteStream(stream);
+    } // InmemoryStore#deleteStream
+
+    async deleteMatches(subject, predicate, object, graph) {
+        // await super.deleteMatches(subject, predicate, object, graph);
+        return this.dataset.deleteMatches(subject, predicate, object, graph);
+    } // InmemoryStore#deleteMatches
+
+    async has(quads) {
+        // const quadArr = await super.has(quads);
+        return this.dataset.has(quads);
+    } // InmemoryStore#has
+
+} // InmemoryStore
+
+module.exports = InmemoryStore;

@@ -1,7 +1,7 @@
 const
     {describe, test, before} = require('mocha'),
     expect                   = require('expect'),
-    InmemoryStore            = require('./module.persistence.inmemory.js');
+    InmemoryStore            = require('../src/module.persistence.inmemory.js');
 
 describe('module.persistence.inmemory', function () {
 
