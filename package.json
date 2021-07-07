@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/module.persistence.inmemory.js",
+  "files": [
+    "src/*"
+  ],
   "dependencies": {
     "@nrd/fua.module.persistence": "1.0.0"
   },
@@ -24,5 +27,5 @@
   },
   "keywords": [],
   "author": "spetrac@nicos-ag.com",
-  "license": ""
+  "license": "UNLICENSED"
 }
