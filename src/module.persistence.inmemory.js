@@ -1,20 +1,13 @@
 const
-    _                    = Object.create(null),
+    util                 = require('@nrd/fua.core.util'),
     {Dataset, DataStore} = require('@nrd/fua.module.persistence');
-
-_.lockProp = function (obj, ...keys) {
-    const lock = {writable: false, configurable: false};
-    for (let key of keys) {
-        Object.defineProperty(obj, key, lock);
-    }
-};
 
 class InmemoryStore extends DataStore {
 
     constructor(options, factory) {
         super(options || {}, factory);
         this.dataset = new Dataset(null, this.factory);
-        _.lockProp(this, 'dataset');
+        util.lockProp(this, 'dataset');
     } // InmemoryStore#constructor
 
     async size() {
