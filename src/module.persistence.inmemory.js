@@ -15,37 +15,69 @@ class InmemoryStore extends DataStore {
     } // InmemoryStore#size
 
     async match(subject, predicate, object, graph) {
-        // const dataset = await super.match(subject, predicate, object, graph);
         return this.dataset.match(subject, predicate, object, graph);
     } // InmemoryStore#match
 
     async add(quads) {
-        // const quadArr = await super.add(quads);
-        return this.dataset.add(quads);
+        const quadArr = await super.add(quads);
+        let added     = 0;
+        for (let quad of quadArr) {
+            if (!this.dataset.has(quad)) {
+                this.dataset.add(quad);
+                this.emit('added', quad);
+                added++;
+            }
+        }
+        return added;
     } // InmemoryStore#add
 
     async addStream(stream) {
-        // const quadStream = await super.addStream(stream);
-        return this.dataset.addStream(stream);
+        const quadStream = await super.addStream(stream);
+        let added        = 0;
+        quadStream.on('data', (quad) => {
+            if (!this.dataset.has(quad)) {
+                this.dataset.add(quad);
+                this.emit('added', quad);
+                added++;
+            }
+        });
+        await new Promise(resolve => quadStream.on('end', resolve));
+        return added;
     } // InmemoryStore#addStream
 
     async delete(quads) {
-        // const quadArr = await super.delete(quads);
-        return this.dataset.delete(quads);
+        const quadArr = await super.delete(quads);
+        let deleted   = 0;
+        for (let quad of quadArr) {
+            if (this.dataset.has(quad)) {
+                this.dataset.delete(quad);
+                this.emit('deleted', quad);
+                deleted++;
+            }
+        }
+        return deleted;
     } // InmemoryStore#delete
 
     async deleteStream(stream) {
-        // const quadStream = await super.deleteStream(stream);
-        return this.dataset.deleteStream(stream);
+        const quadStream = await super.deleteStream(stream);
+        let deleted      = 0;
+        quadStream.on('data', (quad) => {
+            if (this.dataset.has(quad)) {
+                this.dataset.delete(quad);
+                this.emit('deleted', quad);
+                deleted++;
+            }
+        });
+        await new Promise(resolve => quadStream.on('end', resolve));
+        return deleted;
     } // InmemoryStore#deleteStream
 
     async deleteMatches(subject, predicate, object, graph) {
-        // await super.deleteMatches(subject, predicate, object, graph);
-        return this.dataset.deleteMatches(subject, predicate, object, graph);
+        const matches = this.dataset.match(subject, predicate, object, graph);
+        return await this.delete(matches);
     } // InmemoryStore#deleteMatches
 
     async has(quads) {
-        // const quadArr = await super.has(quads);
         return this.dataset.has(quads);
     } // InmemoryStore#has
 
