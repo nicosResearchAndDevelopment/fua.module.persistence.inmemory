@@ -1,4 +1,4 @@
-# module.persistence.inmemory
+# @nrd/fua.module.persistence.inmemory
 
 - [Persistence](https://git02.int.nsc.ag/Research/fua/lib/module.persistence)
 
