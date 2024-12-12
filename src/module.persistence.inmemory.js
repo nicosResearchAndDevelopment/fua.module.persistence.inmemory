@@ -1,6 +1,6 @@
 const
-    util                 = require('@nrd/fua.core.util'),
-    {Dataset, DataStore} = require('@nrd/fua.module.persistence');
+    util                 = require('@fua/core.util'),
+    {Dataset, DataStore} = require('@fua/module.persistence');
 
 class InmemoryStore extends DataStore {
 
